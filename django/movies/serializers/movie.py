@@ -26,3 +26,10 @@ class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = '__all__'
+        
+class MovieReleaseSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Movie
+        fields = ('pk', 'title', 'release_date', 'poster_path', 'like_users',)
+        

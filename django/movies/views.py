@@ -1,9 +1,8 @@
 import requests
+import datetime
 from django.shortcuts import get_list_or_404, get_object_or_404
-from yaml import serialize
 
-
-from .serializers.movie import MovieListSerializer, MovieSerializer
+from .serializers.movie import MovieListSerializer, MovieSerializer, MovieReleaseSerializer
 from .serializers.review import ReviewSerializer
 from .models import Movie, MovieGenre, Genre, Review, Keyword, MovieKeyword
 from rest_framework.decorators import api_view 
@@ -49,7 +48,15 @@ def related_genre(request, movie_pk): # 해당 영화가 가진 장르들과 똑
 @api_view(['GET']) 
 def related_release_date(request, movie_pk): # 해당 영화 개봉일 앞뒤 7일 이내에 개봉한 영화들
     movie = get_object_or_404(Movie, pk=movie_pk)
-    pass
+    #print(movie.release_date, type(movie.release_date))
+    #release_date = datetime.datetime.strptime(movie.release_date, "%Y-%m-%d")
+    start_date = movie.release_date - datetime.timedelta(days=7)
+    end_date = movie.release_date + datetime.timedelta(days=7)
+    
+    movies = Movie.objects.filter(release_date__range=(start_date, end_date)).order_by("-popularity")
+    serializer = MovieReleaseSerializer(movies, many=True)
+    return Response(serializer.data)
+    
 
 
 @api_view(['GET','POST'])
