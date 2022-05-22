@@ -2,7 +2,8 @@ import requests
 import datetime
 from django.shortcuts import get_list_or_404, get_object_or_404
 
-from .serializers.movie import MovieListSerializer, MovieSerializer, MovieReleaseSerializer
+
+from .serializers.movie import MovieListSerializer, MovieSerializer, MovieReleaseSerializer, MovieGenreSerializer
 from .serializers.review import ReviewSerializer
 from .models import Movie, MovieGenre, Genre, Review, Keyword, MovieKeyword
 from rest_framework.decorators import api_view 
@@ -42,14 +43,20 @@ def like_movie(request, movie_pk):
 @api_view(['GET']) 
 def related_genre(request, movie_pk): # 해당 영화가 가진 장르들과 똑같은 장르를 포함한 영화들 , 평점순으로 order_by해서 상위 5개 뽑을까 나중에 수정하기
     movie = get_object_or_404(Movie, pk=movie_pk)
-    moviegenres = MovieGenre.objects.filter(movie_id=movie.pk)
-    pass
+    moviegenres = MovieGenre.objects.filter(movie=movie)
+    movie_ids = []
+    for moviegenre in moviegenres:
+        similar_genres = MovieGenre.objects.filter(genre=moviegenre.genre)[:5]
+        for similar in similar_genres:
+            movie_ids.append(similar.movie.id)
+            
+    movies = Movie.objects.filter(id__in=movie_ids)
+    serializer = MovieGenreSerializer(movies, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET']) 
 def related_release_date(request, movie_pk): # 해당 영화 개봉일 앞뒤 7일 이내에 개봉한 영화들
     movie = get_object_or_404(Movie, pk=movie_pk)
-    #print(movie.release_date, type(movie.release_date))
-    #release_date = datetime.datetime.strptime(movie.release_date, "%Y-%m-%d")
     start_date = movie.release_date - datetime.timedelta(days=7)
     end_date = movie.release_date + datetime.timedelta(days=7)
     
