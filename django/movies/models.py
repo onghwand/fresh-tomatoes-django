@@ -30,6 +30,7 @@ class Movie(models.Model):
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_movies')
     genres = models.ManyToManyField(Genre, through='MovieGenre')
     keywords = models.ManyToManyField(Keyword, through='MovieKeyword')
+    now_playing = models.BooleanField(null=True, default=False)
     
 class MovieGenre(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
