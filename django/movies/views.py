@@ -39,6 +39,21 @@ def like_movie(request, movie_pk):
         movie.like_users.add(user)
         serializer = MovieListSerializer(movie)
         return Response(serializer.data)
+    
+@api_view(['GET']) 
+def related_genre(request, movie_pk): # 해당 영화가 가진 장르들과 똑같은 장르를 포함한 영화들 , 평점순으로 order_by해서 상위 5개 뽑을까 나중에 수정하기
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    moviegenres = MovieGenre.objects.filter(movie_id=movie.pk)
+    pass
+
+@api_view(['GET']) 
+def related_release_date(request, movie_pk): # 해당 영화 개봉일 앞뒤 7일 이내에 개봉한 영화들
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    pass
+
+@api_view(['GET']) 
+def now_playing(request):
+    pass
 
 @api_view(['GET','POST'])
 def review_read_or_create(request, movie_pk):

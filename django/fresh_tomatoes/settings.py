@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # local
     'accounts',
     'movies',
+    'articles',
     # 3rd party
     'rest_framework',
     'rest_framework.authtoken',
