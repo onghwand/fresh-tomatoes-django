@@ -1,7 +1,7 @@
 import requests
 import datetime
 from django.shortcuts import get_list_or_404, get_object_or_404
-
+from django.contrib.auth import get_user_model
 
 from .serializers.movie import MovieListSerializer, MovieSerializer, MovieReleaseSerializer, MovieGenreSerializer
 from .serializers.review import ReviewSerializer
@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+User = get_user_model()
 #import json
 
 BASE_URL = 'https://api.themoviedb.org/3'
@@ -124,11 +125,16 @@ def like_review(request, movie_pk, review_pk):
     
     if review.like_users.filter(pk=user.pk).exists():
         review.like_users.remove(user)
-        serializer = ReviewSerializer(review)
+        
+        #serializer = ReviewSerializer(review)
+        reviews = movie.reviews.all()
+        serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
     else:
         review.like_users.add(user)
-        serializer = ReviewSerializer(review)
+        #serializer = ReviewSerializer(review)
+        reviews = movie.reviews.all()
+        serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
  
 @api_view(['GET']) 
@@ -203,6 +209,48 @@ def now_playing(request): # 시간이 너무 오래 걸림.. table을 따로 만
     serializer = MovieListSerializer(now_playings, many=True)
     return Response(serializer.data)
 
+@api_view(['GET']) 
+def recommendation(request, mode, username):
+    if mode == 'intersection':
+        user = get_object_or_404(User, username=username)
+        movies = user.like_movies.all()
+        movies_ids = set()
+        for movie in movies:
+            movies_ids.add(movie.m_id)
+        
+        def find_movies(limit): # 만약 완벽하게 겹치면 추천해줄 영화가 없으므로 재귀 => 끝까지 못찾으면 []리턴
+            users = get_list_or_404(User)
+            maxV = 0
+            for person in users:
+                if person != user:
+                    person_movies = person.like_movies.all()
+                    person_movies_ids = set()
+                    for person_movie in person_movies:
+                        person_movies_ids.add(person_movie.m_id)
+                    if maxV < len(movies_ids.intersection(person_movies_ids)) < limit:
+                        maxV = len(movies_ids.intersection(person_movies_ids))
+                        intersection = movies_ids.intersection(person_movies_ids)
+                        target = person
+            if maxV == 0:
+                return []
+            
+            target_movies_ids = set() 
+            for movie in target.like_movies.all():
+                target_movies_ids.add(movie.m_id)
+            
+            recommendations = list(target_movies_ids-intersection)
+            
+            if len(recommendations) == 0 :
+                return find_movies(maxV)
+                
+            return recommendations
+        
+        recommendations = find_movies(100)
+        movies = Movie.objects.filter(m_id__in=recommendations)
+        serializer = MovieListSerializer(movies, many=True)
+        return Response(serializer.data)
+    
+
 # def edit_data(request):
 #     params = {
 #                 'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
@@ -276,6 +324,6 @@ def now_playing(request): # 시간이 너무 오래 걸림.. table을 따로 만
 #             keyword = Keyword.objects.get(k_id=element['id'])
 #             MovieKeyword.objects.create(movie=one_movie,
 #                                         keyword=keyword)
-    # movies = Movie.objects.all()
-    # serializer = MovieListSerializer(movies, many=True)
-    # return Response(serializer.data)
+#     movies = Movie.objects.all()
+#     serializer = MovieListSerializer(movies, many=True)
+#     return Response(serializer.data)
