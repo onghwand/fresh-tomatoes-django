@@ -5,7 +5,7 @@ from yaml import serialize
 
 from .serializers.movie import MovieListSerializer, MovieSerializer
 from .serializers.review import ReviewSerializer
-from .models import Movie, MovieGenre, Genre, Review
+from .models import Movie, MovieGenre, Genre, Review, Keyword, MovieKeyword
 from rest_framework.decorators import api_view 
 from rest_framework.response import Response
 from rest_framework import status
@@ -51,9 +51,6 @@ def related_release_date(request, movie_pk): # 해당 영화 개봉일 앞뒤 7�
     movie = get_object_or_404(Movie, pk=movie_pk)
     pass
 
-@api_view(['GET']) 
-def now_playing(request):
-    pass
 
 @api_view(['GET','POST'])
 def review_read_or_create(request, movie_pk):
@@ -119,56 +116,78 @@ def like_review(request, movie_pk, review_pk):
         review.like_users.add(user)
         serializer = ReviewSerializer(review)
         return Response(serializer.data)
-
-
-
-@api_view(['GET'])
-def movie_list(request, mode):
-    if mode == 'now_playing':
-        path_now_playing = '/movie/now_playing'
-        # path_genre = '/genre/movie/list'
-        params = {
+ 
+@api_view(['GET']) 
+def now_playing(request): # 시간이 너무 오래 걸림.. table을 따로 만드는게 맞는가 싶음
+    path_now_playing = '/movie/now_playing'
+    
+    params = {
             'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
             'language' : 'en-US',
-            'region': 'US'
         }
-        # response_genre = requests.get(BASE_URL+path_genre, params=params).json()['genres']
-        # for res in response_genre:
-        #     if not Genre.objects.filter(name=res['name']).exists():
-        #         Genre.objects.create(g_id=res['id'],
-        #                             name=res['name'])
-        
-        response_now_playing = requests.get(BASE_URL+path_now_playing, params=params).json()['results']
-        for res in response_now_playing:
-            if not Movie.objects.filter(title=res['title']).exists():
-                movie = Movie.objects.create(m_id=res['id'],
-                                    title=res['title'],
-                                    overview=res['overview'],
-                                    release_date=res['release_date'],
-                                    poster_path=res['poster_path'],
-                                    backdrop_path=res['backdrop_path'],
-                                    popularity=res['popularity'],
-                                    vote_count=res['vote_count'],
-                                    vote_average=res['vote_average'],
-                                    adult=res['adult']
-                                    #original_language=res_detail['original_language'],
-                                    #runtime=res_detail['runtime'],
-                                    #status=res_detail['status'],
-                                    #tagline=res_detail['tagline']
-                                    )
-                for genre_id in res['genre_ids']:
-                    genre = Genre.objects.get(g_id=genre_id)
-                    MovieGenre.objects.create(movie=movie,
-                                            genre=genre)
-                    
-                # path_detail = f"movie/{movie.m_id}"
-                # res_detail = requests.get(BASE_URL+path_detail, params=params)
-                # print(res_detail)
-                # print(res['title'],res_detail['original_language'],res_detail['runtime'],res_detail['status'],res_detail['tagline']) 
+    params_keywords = {
+        'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
+    }
+    # 전체 영화 다 False로 초기화
+    movies = get_list_or_404(Movie)
+    for movie in movies:
+        movie.now_playing = False
+        movie.save()
+    
+    # 상영중인 영화를 받아옴  
+    response_now_playing = requests.get(BASE_URL+path_now_playing, params=params).json()['results']
+    for response in response_now_playing:
+        if not Movie.objects.filter(m_id=response['id']).exists():
+            movie_id = response['id']
+            path_detail = f'/movie/{movie_id}'
+            path_keywords = f'/movie/{movie_id}/keywords'
+            detail = requests.get(BASE_URL+path_detail, params=params).json()
+            keywords = requests.get(BASE_URL+path_keywords, params=params_keywords).json()
             
-        movies = Movie.objects.all()
-        serializer = MovieListSerializer(movies, many=True)
-        return Response(serializer.data)
+            movie = Movie.objects.create(m_id=detail['id'],
+                                        title=detail['title'],
+                                        overview=detail['overview'],
+                                        release_date=detail['release_date'],
+                                        poster_path=detail['poster_path'],
+                                        backdrop_path=detail['backdrop_path'],
+                                        popularity=detail['popularity'],
+                                        vote_count=detail['vote_count'],
+                                        vote_average=detail['vote_average'],
+                                        adult=detail['adult'],
+                                        original_language=detail['original_language'],
+                                        runtime=detail['runtime'],
+                                        status=detail['status'],
+                                        tagline=detail['tagline'],
+                                        budget=detail['budget'],
+                                        revenue=detail['revenue'],
+                                        homepage=detail['homepage'],
+                                        now_playing=True,
+                                        )
+            for res in detail['genres']:
+                if not Genre.objects.filter(g_id=res['id']).exists():
+                    genre = Genre.objects.create(g_id=res['id'],
+                                                name=res['name'])
+                else:
+                    genre = Genre.objects.get(g_id=res['id'])
+                MovieGenre.objects.create(movie=movie,
+                                          genre=genre)
+            
+            for res in keywords['keywords']:
+                if not Keyword.objects.filter(k_id=res['id']).exists():
+                    keyword = Keyword.objects.create(k_id=res['id'],
+                                                    name=res['name'])
+                else:
+                    keyword = Keyword.objects.get(k_id=res['id'])
+                MovieKeyword.objects.create(movie=movie,
+                                            keyword=keyword)
+        else:
+            movie = Movie.objects.get(m_id=response['id'])
+            movie.now_playing = True
+            movie.save()
+        
+    now_playings = Movie.objects.filter(now_playing=True)
+    serializer = MovieListSerializer(now_playings, many=True)
+    return Response(serializer.data)
 
 # def edit_data(request):
 #     params = {
