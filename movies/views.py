@@ -3,7 +3,7 @@ import datetime
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.contrib.auth import get_user_model
 
-from .serializers.movie import MovieListSerializer, MovieSerializer, MovieReleaseSerializer, MovieGenreSerializer
+from .serializers.movie import MovieListSerializer, MovieSerializer, MovieReleaseSerializer, MovieGenreSerializer, QuestionsSerializer
 from .serializers.review import ReviewSerializer
 from .models import Movie, MovieGenre, Genre, Review, Keyword, MovieKeyword
 from rest_framework.decorators import api_view 
@@ -209,8 +209,9 @@ def now_playing(request): # 시간이 너무 오래 걸림.. table을 따로 만
     serializer = MovieListSerializer(now_playings, many=True)
     return Response(serializer.data)
 
-@api_view(['GET']) 
+@api_view(['GET','POST']) 
 def recommendation(request, mode):
+    
     if mode == 'intersection':
         # user = get_object_or_404(User, username=username)
         user = request.user
@@ -250,6 +251,33 @@ def recommendation(request, mode):
         movies = Movie.objects.filter(m_id__in=recommendations)
         serializer = MovieListSerializer(movies, many=True)
         return Response(serializer.data)
+
+    elif mode == 'questions':
+        '''
+        request.post 데이터로 받아와서 
+        예를 들면 {'genre':'comedy', 'runtime': 'less than 100', 'release_date': 'over 2020', ...}
+        Movie.objects.filter(genre=comedy) & Movie.objects.filter(runtime__lt=100) & Movie.objects.filter(release_date__gt=='2020-01-01') 
+        해서 만족하는 영화 list return
+        '''
+        #print(request.POST)
+        #print(request.POST['genre'], request.POST['runtime'],  request.POST['release_date'], type(request.POST['release_date']))
+        movies_runtime = Movie.objects.filter(runtime__lt=request.POST['runtime']).order_by('-popularity') & Movie.objects.filter(release_date__gt=request.POST['release_date'])
+        movies = Movie.objects.all()
+        movies_genre = []
+        target_genre = Genre.objects.get(name=request.POST['genre']).g_id
+        for movie in movies:
+            for genre in movie.genres.all():
+                if genre.g_id == target_genre:
+                    movies_genre.append(movie.m_id)
+                    break
+        movies_genre = Movie.objects.filter(m_id__in=movies_genre)
+                    
+        #print(movies_genre, len(movies_genre))
+        #print(movies_genre & movies_runtime, len(movies_genre & movies_runtime))
+        recommendations = (movies_genre & movies_runtime).order_by('-popularity')
+        serializer = QuestionsSerializer(recommendations, many=True)
+        return Response(serializer.data)
+    
     
 
 # def edit_data(request):
