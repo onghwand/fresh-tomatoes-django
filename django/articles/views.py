@@ -79,20 +79,32 @@ def like_article(request, article_pk):
         return Response(serializer.data)
 
 
-@api_view(['POST'])
-def create_comment(request, article_pk):
+@api_view(['GET', 'POST'])
+def comment_list_or_create(request, article_pk):
     user = request.user
     article = get_object_or_404(Article, pk=article_pk)
     
-    serializer = CommentSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        serializer.save(article=article, user=user)
-
-        # 기존 serializer 가 return 되면, 단일 comment 만 응답으로 받게됨.
-        # 사용자가 댓글을 입력하는 사이에 업데이트된 comment 확인 불가 => 업데이트된 전체 목록 return 
+    def comment_list():
         comments = article.comments.all()
         serializer = CommentSerializer(comments, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
+    
+    def create_comment():
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(article=article, user=user)
+
+            # 기존 serializer 가 return 되면, 단일 comment 만 응답으로 받게됨.
+            # 사용자가 댓글을 입력하는 사이에 업데이트된 comment 확인 불가 => 업데이트된 전체 목록 return 
+            comments = article.comments.all()
+            serializer = CommentSerializer(comments, many=True)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+    if request.method == 'GET':
+        return comment_list()
+    elif request.method == 'POST':
+        return create_comment()
+    
 
 
 @api_view(['PUT', 'DELETE'])
