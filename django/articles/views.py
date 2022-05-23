@@ -69,14 +69,15 @@ def article_detail_or_update_or_delete(request, article_pk):
 def like_article(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     user = request.user
-    if article.like_users.filter(pk=user.pk).exists():
-        article.like_users.remove(user)
-        serializer = ArticleSerializer(article)
-        return Response(serializer.data)
-    else:
-        article.like_users.add(user)
-        serializer = ArticleSerializer(article)
-        return Response(serializer.data)
+    if user != article.user:
+        if article.like_users.filter(pk=user.pk).exists():
+            article.like_users.remove(user)
+            serializer = ArticleSerializer(article)
+            return Response(serializer.data)
+        else:
+            article.like_users.add(user)
+            serializer = ArticleSerializer(article)
+            return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])

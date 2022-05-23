@@ -210,9 +210,10 @@ def now_playing(request): # 시간이 너무 오래 걸림.. table을 따로 만
     return Response(serializer.data)
 
 @api_view(['GET']) 
-def recommendation(request, mode, username):
+def recommendation(request, mode):
     if mode == 'intersection':
-        user = get_object_or_404(User, username=username)
+        # user = get_object_or_404(User, username=username)
+        user = request.user
         movies = user.like_movies.all()
         movies_ids = set()
         for movie in movies:

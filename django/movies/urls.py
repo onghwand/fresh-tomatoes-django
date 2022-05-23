@@ -21,5 +21,5 @@ urlpatterns = [
     path('<int:movie_pk>/reviews/<int:review_pk>/like/', views.like_review),
     
     #recommendation
-    path('recommendation/<mode>/<username>/', views.recommendation),
+    path('recommendation/<mode>/', views.recommendation),
 ]
