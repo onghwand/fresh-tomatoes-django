@@ -34,11 +34,11 @@ def like_movie(request, movie_pk):
     user = request.user
     if movie.like_users.filter(pk=user.pk).exists():
         movie.like_users.remove(user)
-        serializer = MovieListSerializer(movie)
+        serializer = MovieSerializer(movie)
         return Response(serializer.data)
     else:
         movie.like_users.add(user)
-        serializer = MovieListSerializer(movie)
+        serializer = MovieSerializer(movie)
         return Response(serializer.data)
     
 @api_view(['GET']) 
