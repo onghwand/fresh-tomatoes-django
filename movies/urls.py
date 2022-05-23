@@ -22,4 +22,5 @@ urlpatterns = [
     
     #recommendation
     path('recommendation/<mode>/', views.recommendation),
+    
 ]
