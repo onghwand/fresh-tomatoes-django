@@ -1,6 +1,7 @@
 import requests
 import datetime
-import time
+#import time
+#import json
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.contrib.auth import get_user_model
 
@@ -12,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 User = get_user_model()
-#import json
+
 
 BASE_URL = 'https://api.themoviedb.org/3'
 
@@ -138,9 +139,86 @@ def like_review(request, movie_pk, review_pk):
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
  
+# @api_view(['GET']) 
+# def now_playing(request): # 시간이 너무 오래 걸림.. table을 따로 만드는게 맞는가 싶음
+#     path_now_playing = '/movie/now_playing'
+    
+#     params = {
+#             'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
+#             'language' : 'en-US',
+#         }
+#     params_keywords = {
+#         'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
+#     }
+#     # 전체 영화 다 False로 초기화
+#     movies = Movie.objects.filter(now_playing=True)
+#     for movie in movies:
+#         movie.now_playing = False
+#         movie.save()
+    
+#     # 상영중인 영화를 받아옴  
+#     response_now_playing = requests.get(BASE_URL+path_now_playing, params=params).json()['results']
+#     for response in response_now_playing:
+        
+#         if not Movie.objects.filter(m_id=response['id']).exists():
+#             movie_id = response['id']
+#             path_detail = f'/movie/{movie_id}'
+#             path_keywords = f'/movie/{movie_id}/keywords'
+#             detail = requests.get(BASE_URL+path_detail, params=params).json()
+#             keywords = requests.get(BASE_URL+path_keywords, params=params_keywords).json()
+            
+#             movie = Movie.objects.create(m_id=detail['id'],
+#                                         title=detail['title'],
+#                                         overview=detail['overview'],
+#                                         release_date=detail['release_date'],
+#                                         poster_path=detail['poster_path'],
+#                                         backdrop_path=detail['backdrop_path'],
+#                                         popularity=detail['popularity'],
+#                                         vote_count=detail['vote_count'],
+#                                         vote_average=detail['vote_average'],
+#                                         adult=detail['adult'],
+#                                         original_language=detail['original_language'],
+#                                         runtime=detail['runtime'],
+#                                         status=detail['status'],
+#                                         tagline=detail['tagline'],
+#                                         budget=detail['budget'],
+#                                         revenue=detail['revenue'],
+#                                         homepage=detail['homepage'],
+#                                         now_playing=True,
+#                                         )
+            
+    
+#             for res in detail['genres']:
+#                 if not Genre.objects.filter(g_id=res['id']).exists():
+#                     genre = Genre.objects.create(g_id=res['id'],
+#                                                 name=res['name'])
+#                 else:
+#                     genre = Genre.objects.get(g_id=res['id'])
+#                 MovieGenre.objects.create(movie=movie,
+#                                           genre=genre)
+            
+#             for res in keywords['keywords']:
+#                 if not Keyword.objects.filter(k_id=res['id']).exists():
+#                     keyword = Keyword.objects.create(k_id=res['id'],
+#                                                     name=res['name'])
+#                 else:
+#                     keyword = Keyword.objects.get(k_id=res['id'])
+#                 MovieKeyword.objects.create(movie=movie,
+#                                             keyword=keyword)
+#         else:
+#             movie = Movie.objects.get(m_id=response['id'])
+#             movie.now_playing = True
+#             movie.save()
+
+#     now_playings = Movie.objects.filter(now_playing=True)
+#     serializer = MovieListSerializer(now_playings, many=True)
+#     return Response(serializer.data)
+
 @api_view(['GET']) 
-def now_playing(request): # 시간이 너무 오래 걸림.. table을 따로 만드는게 맞는가 싶음
+def get_movies(request, mode): # 시간이 너무 오래 걸림.. table을 따로 만드는게 맞는가 싶음
     path_now_playing = '/movie/now_playing'
+    path_popular = '/movie/popular'
+    path_upcoming = '/movie/upcoming'
     
     params = {
             'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
@@ -149,73 +227,111 @@ def now_playing(request): # 시간이 너무 오래 걸림.. table을 따로 만
     params_keywords = {
         'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
     }
-    # 전체 영화 다 False로 초기화
     
-    #movies = get_list_or_404(Movie)
-    movies = Movie.objects.filter(now_playing=True)
-    for movie in movies:
-        movie.now_playing = False
-        movie.save()
-    
-    
-    # 상영중인 영화를 받아옴  
-    response_now_playing = requests.get(BASE_URL+path_now_playing, params=params).json()['results']
-    for response in response_now_playing:
-        
-        if not Movie.objects.filter(m_id=response['id']).exists():
-            movie_id = response['id']
-            path_detail = f'/movie/{movie_id}'
-            path_keywords = f'/movie/{movie_id}/keywords'
-            detail = requests.get(BASE_URL+path_detail, params=params).json()
-            keywords = requests.get(BASE_URL+path_keywords, params=params_keywords).json()
+    def create_movie(response):
+        movie_id = response['id']
+        path_detail = f'/movie/{movie_id}'
+        path_keywords = f'/movie/{movie_id}/keywords'
+        detail = requests.get(BASE_URL+path_detail, params=params).json()
+        keywords = requests.get(BASE_URL+path_keywords, params=params_keywords).json()
             
-            point4 = time.time()
-            movie = Movie.objects.create(m_id=detail['id'],
-                                        title=detail['title'],
-                                        overview=detail['overview'],
-                                        release_date=detail['release_date'],
-                                        poster_path=detail['poster_path'],
-                                        backdrop_path=detail['backdrop_path'],
-                                        popularity=detail['popularity'],
-                                        vote_count=detail['vote_count'],
-                                        vote_average=detail['vote_average'],
-                                        adult=detail['adult'],
-                                        original_language=detail['original_language'],
-                                        runtime=detail['runtime'],
-                                        status=detail['status'],
-                                        tagline=detail['tagline'],
-                                        budget=detail['budget'],
-                                        revenue=detail['revenue'],
-                                        homepage=detail['homepage'],
-                                        now_playing=True,
-                                        )
+        movie = Movie.objects.create(m_id=detail['id'],
+                                    title=detail['title'],
+                                    overview=detail['overview'],
+                                    release_date=detail['release_date'],
+                                    poster_path=detail['poster_path'],
+                                    backdrop_path=detail['backdrop_path'],
+                                    popularity=detail['popularity'],
+                                    vote_count=detail['vote_count'],
+                                    vote_average=detail['vote_average'],
+                                    adult=detail['adult'],
+                                    original_language=detail['original_language'],
+                                    runtime=detail['runtime'],
+                                    status=detail['status'],
+                                    tagline=detail['tagline'],
+                                    budget=detail['budget'],
+                                    revenue=detail['revenue'],
+                                    homepage=detail['homepage'],
+                                    now_playing=True,
+                                    )
             
     
-            for res in detail['genres']:
-                if not Genre.objects.filter(g_id=res['id']).exists():
-                    genre = Genre.objects.create(g_id=res['id'],
-                                                name=res['name'])
-                else:
-                    genre = Genre.objects.get(g_id=res['id'])
+        for res in detail['genres']:
+            if not Genre.objects.filter(g_id=res['id']).exists():
+                genre = Genre.objects.create(g_id=res['id'],
+                                            name=res['name'])
+            else:
+                genre = Genre.objects.get(g_id=res['id'])
                 MovieGenre.objects.create(movie=movie,
                                           genre=genre)
             
-            for res in keywords['keywords']:
-                if not Keyword.objects.filter(k_id=res['id']).exists():
-                    keyword = Keyword.objects.create(k_id=res['id'],
-                                                    name=res['name'])
-                else:
-                    keyword = Keyword.objects.get(k_id=res['id'])
+        for res in keywords['keywords']:
+            if not Keyword.objects.filter(k_id=res['id']).exists():
+                keyword = Keyword.objects.create(k_id=res['id'],
+                                                name=res['name'])
+            else:
+                keyword = Keyword.objects.get(k_id=res['id'])
                 MovieKeyword.objects.create(movie=movie,
                                             keyword=keyword)
-        else:
-            movie = Movie.objects.get(m_id=response['id'])
-            movie.now_playing = True
+    
+    # 전체 영화 다 False로 초기화
+    if mode == 'now_playing':
+        movies = Movie.objects.filter(now_playing=True)
+        for movie in movies:
+            movie.now_playing = False
             movie.save()
+        
+        # 상영중인 영화를 받아옴  
+        response_now_playing = requests.get(BASE_URL+path_now_playing, params=params).json()['results']
+        for response in response_now_playing:
+            if not Movie.objects.filter(m_id=response['id']).exists():
+                create_movie(response)
+            else:
+                movie = Movie.objects.get(m_id=response['id'])
+                movie.now_playing = True
+                movie.save()
 
-    now_playings = Movie.objects.filter(now_playing=True)
-    serializer = MovieListSerializer(now_playings, many=True)
+        now_playings = Movie.objects.filter(now_playing=True)
+        serializer = MovieListSerializer(now_playings, many=True)
+    elif mode == 'popular':
+        movies = Movie.objects.filter(popular=True)
+        for movie in movies:
+            movie.popular = False
+            movie.save()
+        
+        # 상영중인 영화를 받아옴  
+        response_popular = requests.get(BASE_URL+path_popular, params=params).json()['results']
+        for response in response_popular:
+            if not Movie.objects.filter(m_id=response['id']).exists():
+                create_movie(response)
+            else:
+                movie = Movie.objects.get(m_id=response['id'])
+                movie.popular = True
+                movie.save()
+
+        populars = Movie.objects.filter(popular=True)
+        serializer = MovieListSerializer(populars, many=True)
+    elif mode == 'upcoming':
+        movies = Movie.objects.filter(upcoming=True)
+        for movie in movies:
+            movie.upcoming = False
+            movie.save()
+        
+        # 상영중인 영화를 받아옴  
+        response_upcoming = requests.get(BASE_URL+path_upcoming, params=params).json()['results']
+        for response in response_upcoming:
+            if not Movie.objects.filter(m_id=response['id']).exists():
+                create_movie(response)
+            else:
+                movie = Movie.objects.get(m_id=response['id'])
+                movie.upcoming = True
+                movie.save()
+
+        upcomings = Movie.objects.filter(upcoming=True) & Movie.objects.filter(release_date__gt=datetime.datetime.now())
+        serializer = MovieListSerializer(upcomings, many=True)
     return Response(serializer.data)
+
+
 
 @api_view(['GET','POST']) 
 def recommendation(request, mode):

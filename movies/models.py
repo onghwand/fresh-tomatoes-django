@@ -31,6 +31,8 @@ class Movie(models.Model):
     genres = models.ManyToManyField(Genre, through='MovieGenre')
     keywords = models.ManyToManyField(Keyword, through='MovieKeyword')
     now_playing = models.BooleanField(null=True, default=False)
+    popular = models.BooleanField(null=True, default=False)
+    upcoming = models.BooleanField(null=True, default=False)
     
 class MovieGenre(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
