@@ -258,9 +258,12 @@ def recommendation(request, mode):
         예를 들면 {'genre':'comedy', 'runtime': 'less than 100', 'release_date': 'over 2020', ...}
         Movie.objects.filter(genre=comedy) & Movie.objects.filter(runtime__lt=100) & Movie.objects.filter(release_date__gt=='2020-01-01') 
         해서 만족하는 영화 list return
+        runtime => 1번 - 100분 이하, 2번- 100~130, 3번 - 130~160, 4번 -160초과
+        release_date => 1번 - 1970년 전 2번- 1970-2000 3번- 2000-2020 4번 2020초과
+        genre => 너쪽에서 많이 추려서 1개 골라줘 (김도현이 뷰 고치기)
         '''
         #print(request.POST)
-        #print(request.POST['genre'], request.POST['runtime'],  request.POST['release_date'], type(request.POST['release_date']))
+        #print(request.POST['genre'], request.POST['runtime'],  request.POST['release_date'], type(request.POST['release_date'])) 
         movies_runtime = Movie.objects.filter(runtime__lt=request.POST['runtime']).order_by('-popularity') & Movie.objects.filter(release_date__gt=request.POST['release_date'])
         movies = Movie.objects.all()
         movies_genre = []
