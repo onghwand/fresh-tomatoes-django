@@ -19,7 +19,7 @@ BASE_URL = 'https://api.themoviedb.org/3'
 
 @api_view(['GET'])
 def movie(request):
-    movies = get_list_or_404(Movie)[:500]
+    movies = get_list_or_404(Movie)[:20]
     serializer = MovieListSerializer(movies, many=True)
     return Response(serializer.data)
 
@@ -309,7 +309,7 @@ def get_movies(request, mode): # 시간이 너무 오래 걸림.. table을 따�
                 movie.popular = True
                 movie.save()
 
-        populars = Movie.objects.filter(popular=True)
+        populars = (Movie.objects.filter(popular=True) & Movie.objects.filter(now_playing=False))[:20]
         serializer = MovieListSerializer(populars, many=True)
     elif mode == 'upcoming':
         movies = Movie.objects.filter(upcoming=True)
