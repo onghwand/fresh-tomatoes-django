@@ -2,10 +2,17 @@ from rest_framework import serializers
 from ..models import Movie, Genre, Keyword
 
 class MovieListSerializer(serializers.ModelSerializer):
-       
+    
+    class GenreSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Genre
+            fields = ('name',)
+            
+    genres = GenreSerializer(many=True)
+    
     class Meta:
         model = Movie
-        fields = ('pk', 'title', 'poster_path', 'like_users', 'tagline', 'release_date', 'overview', 'popularity',)
+        fields = ('pk', 'title', 'poster_path', 'like_users', 'tagline', 'release_date', 'overview', 'popularity', 'runtime', 'genres',)
         
         
 class MovieSerializer(serializers.ModelSerializer):
