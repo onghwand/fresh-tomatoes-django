@@ -433,6 +433,9 @@ def search(request):
         path_keywords = f'/movie/{movie_id}/keywords'
         detail = requests.get(BASE_URL+path_detail, params=params).json()
         keywords = requests.get(BASE_URL+path_keywords, params=params_keywords).json()
+        
+        if detail['release_date'] == "":
+            detail['release_date'] = "1000-01-01"
             
         movie = Movie.objects.create(m_id=detail['id'],
                                     title=detail['title'],
