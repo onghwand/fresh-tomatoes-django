@@ -14,6 +14,7 @@ urlpatterns = [
     path('<int:movie_pk>/related/genre/', views.related_genre), # 관련된 영화 정보 - 같은 장르 
     path('<int:movie_pk>/related/release_date/', views.related_release_date), # 관련된 영화 정보 -비슷한시기
     #path('now_playing/', views.now_playing), # 현재 상영중인 영화 정보
+    path('search/', views.search),
     
     # comments
     path('<int:movie_pk>/reviews/', views.review_read_or_create),

@@ -414,8 +414,79 @@ def recommendation(request, mode):
             serializer = QuestionsSerializer(recommendations, many=True)
         return Response(serializer.data)
     
+@api_view(['POST'])
+def search(request):
+    path = "/search/movie"
+    query = request.data['query']
+    params = {
+        'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
+        'language' : 'en-US',
+        'query': query
+    }
+    params_keywords = {
+        'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
+    }
+        
+    def create_movie(response):
+        movie_id = response['id']
+        path_detail = f'/movie/{movie_id}'
+        path_keywords = f'/movie/{movie_id}/keywords'
+        detail = requests.get(BASE_URL+path_detail, params=params).json()
+        keywords = requests.get(BASE_URL+path_keywords, params=params_keywords).json()
+            
+        movie = Movie.objects.create(m_id=detail['id'],
+                                    title=detail['title'],
+                                    overview=detail['overview'],
+                                    release_date=detail['release_date'],
+                                    poster_path=detail['poster_path'],
+                                    backdrop_path=detail['backdrop_path'],
+                                    popularity=detail['popularity'],
+                                    vote_count=detail['vote_count'],
+                                    vote_average=detail['vote_average'],
+                                    adult=detail['adult'],
+                                    original_language=detail['original_language'],
+                                    runtime=detail['runtime'],
+                                    status=detail['status'],
+                                    tagline=detail['tagline'],
+                                    budget=detail['budget'],
+                                    revenue=detail['revenue'],
+                                    homepage=detail['homepage'],
+                                    now_playing=True,
+                                    )
+            
     
-
+        for res in detail['genres']:
+            if not Genre.objects.filter(g_id=res['id']).exists():
+                genre = Genre.objects.create(g_id=res['id'],
+                                            name=res['name'])
+            else:
+                genre = Genre.objects.get(g_id=res['id'])
+                MovieGenre.objects.create(movie=movie,
+                                          genre=genre)
+            
+        for res in keywords['keywords']:
+            if not Keyword.objects.filter(k_id=res['id']).exists():
+                keyword = Keyword.objects.create(k_id=res['id'],
+                                                name=res['name'])
+            else:
+                keyword = Keyword.objects.get(k_id=res['id'])
+                MovieKeyword.objects.create(movie=movie,
+                                            keyword=keyword)
+        return movie       
+    response = requests.get(BASE_URL+path, params=params).json()
+    response = response['results']
+    movie_pks = []            
+    for res in response:
+        if not Movie.objects.filter(m_id=res['id']).exists():
+            movie = create_movie(res)
+            movie_pks.append(movie.pk)
+        else:
+            movie = Movie.objects.get(m_id=res['id'])
+            movie_pks.append(movie.pk)
+            
+    movies = Movie.objects.filter(pk__in=movie_pks)
+    serializer = MovieListSerializer(movies, many=True)
+    return Response(serializer.data)
 # def edit_data(request):
 #     params = {
 #                 'api_key' : '1c495200bf8a0c1956a9c60b7877da9c',
