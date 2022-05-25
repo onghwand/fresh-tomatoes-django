@@ -386,31 +386,33 @@ def recommendation(request, mode):
         release_date => 1번 - 1970년 전 2번- 1970-2000 3번- 2000-2020 4번 2020초과
         genre => 너쪽에서 많이 추려서 1개 골라줘 (김도현이 뷰 고치기)
         '''
-        #print(request.POST)
-        #print(request.POST['genre'], request.POST['runtime'],  request.POST['release_date'], type(request.POST['release_date'])) 
-        genre_options = {'1':'Comedy','2':'Action','3':'Science Fiction','4':'Thriller'}
+
+        genre_options = {'1':["Action", "Adventure", "Crime", "Western"],'2':["Fantasy", "Science Fiction"],'3':["Romance", "Family", "Animation", "Drama", "Comedy", "Music"],'4':["Thriller", "Horror", "Mystery", "War"], '5':["History", "Documentary", "Foreign", "TV Movie"]}
         runtime_options = {'1':[0,100],'2':[101,130],'3':[131,160],'4':[160,1000]}
         release_date_options ={'1':['1000-01-01','1969-12-01'],'2':['1970-01-01','1999-12-31'],'3':['2000-01-01','2019-12-31'],'4':['2020-01-01','3000-01-01']}
         
-        genre = genre_options[request.POST['genre']]
+        genres = genre_options[request.POST['genre']]
         runtime = runtime_options[request.POST['runtime']] 
         release_date = release_date_options[request.POST['release_date']]
-        
+
         movies_runtime = Movie.objects.filter(runtime__range=(runtime[0],runtime[1])) & Movie.objects.filter(release_date__range=(release_date[0], release_date[1]))
         movies = Movie.objects.all()
         movies_genre = []
-        target_genre = Genre.objects.get(name=genre).g_id
+        target_genre_id = []
+        for genre in genres:
+            target_genre_id += [Genre.objects.get(name=genre).g_id]
         for movie in movies:
             for genre in movie.genres.all():
-                if genre.g_id == target_genre:
+                if genre.g_id in target_genre_id:
                     movies_genre.append(movie.m_id)
                     break
-        movies_genre = Movie.objects.filter(m_id__in=movies_genre)
-                    
-        #print(movies_genre, len(movies_genre))
-        #print(movies_genre & movies_runtime, len(movies_genre & movies_runtime))
-        recommendations = (movies_genre & movies_runtime).order_by('-popularity')[:5]
-        serializer = QuestionsSerializer(recommendations, many=True)
+        movies_genre = Movie.objects.filter(m_id__in = movies_genre)
+
+        recommendations = (movies_genre & movies_runtime).order_by('-popularity')
+        if len(recommendations) > 5:
+            serializer = QuestionsSerializer(recommendations[:5], many=True)
+        else:
+            serializer = QuestionsSerializer(recommendations, many=True)
         return Response(serializer.data)
     
     
