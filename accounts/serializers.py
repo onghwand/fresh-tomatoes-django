@@ -10,13 +10,21 @@ class ProfileSerializer(serializers.ModelSerializer):
         
         class Meta:
             model = Movie
-            fields = ('pk', 'title',)
+            fields = '__all__'
             
     class ReviewSerializer(serializers.ModelSerializer):
         
+        class MovieSerializer(serializers.ModelSerializer):
+        
+            class Meta:
+                model = Movie
+                fields = ('pk','title','poster_path')
+                
+        movie = MovieSerializer()
+        
         class Meta:
             model = Review
-            fields = ('pk', 'content',)
+            fields = '__all__'
             
     like_movies = MovieSerializer(many=True)
     reviews = ReviewSerializer(many=True)
