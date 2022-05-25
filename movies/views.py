@@ -1,3 +1,4 @@
+import random
 import requests
 import datetime
 #import time
@@ -377,37 +378,33 @@ def recommendation(request, mode):
         return Response(serializer.data)
 
     elif mode == 'questions':
-        '''
-        request.post 데이터로 받아와서 
-        예를 들면 {'genre':'comedy', 'runtime': 'less than 100', 'release_date': 'over 2020', ...}
-        Movie.objects.filter(genre=comedy) & Movie.objects.filter(runtime__lt=100) & Movie.objects.filter(release_date__gt=='2020-01-01') 
-        해서 만족하는 영화 list return
-        runtime => 1번 - 100분 이하, 2번- 100~130, 3번 - 130~160, 4번 -160초과
-        release_date => 1번 - 1970년 전 2번- 1970-2000 3번- 2000-2020 4번 2020초과
-        genre => 너쪽에서 많이 추려서 1개 골라줘 (김도현이 뷰 고치기)
-        '''
 
-        genre_options = {'1':["Action", "Adventure", "Crime", "Western"],'2':["Fantasy", "Science Fiction"],'3':["Romance", "Family", "Animation", "Drama", "Comedy", "Music"],'4':["Thriller", "Horror", "Mystery", "War"], '5':["History", "Documentary", "Foreign", "TV Movie"]}
+        # genre_options = {'1':["Action", "Adventure", "Crime", "Western"],'2':["Fantasy", "Science Fiction"],'3':["Romance", "Family", "Animation", "Drama", "Comedy", "Music"],'4':["Thriller", "Horror", "Mystery", "War"], '5':["History", "Documentary", "Foreign", "TV Movie"]}
+        genre_options = {'1':[28, 12, 80, 37], '2':[14, 878], '3':[10749, 10751, 16, 18, 35, 10402], '4':[53, 27, 9648, 10752], '5':[36, 99, 10769, 10770]}
         runtime_options = {'1':[0,100],'2':[101,130],'3':[131,160],'4':[160,1000]}
-        release_date_options ={'1':['1000-01-01','1969-12-01'],'2':['1970-01-01','1999-12-31'],'3':['2000-01-01','2019-12-31'],'4':['2020-01-01','3000-01-01']}
+        release_date_options ={'1':['1000-01-01','1979-12-01'],'2':['1970-01-01','2004-12-31'],'3':['2000-01-01','2019-12-31'],'4':['2015-01-01','3000-01-01']}
         genres = genre_options[request.data['genre']]
         runtime = runtime_options[request.data['runtime']] 
         release_date = release_date_options[request.data['release_date']]
 
         movies_runtime = Movie.objects.filter(runtime__range=(runtime[0],runtime[1])) & Movie.objects.filter(release_date__range=(release_date[0], release_date[1]))
-        movies = Movie.objects.all()
+        
+       
+        # target_genre_id = []
+        # for genre in genres:
+        #     target_genre_id += [Genre.objects.get(name=genre).g_id]
+
         movies_genre = []
-        target_genre_id = []
-        for genre in genres:
-            target_genre_id += [Genre.objects.get(name=genre).g_id]
+        movies = Movie.objects.all()
         for movie in movies:
             for genre in movie.genres.all():
-                if genre.g_id in target_genre_id:
+                if genre.g_id in genres:
                     movies_genre.append(movie.m_id)
                     break
         movies_genre = Movie.objects.filter(m_id__in = movies_genre)
 
         recommendations = (movies_genre & movies_runtime).order_by('-popularity')
+        print(recommendations)
         if len(recommendations) > 5:
             serializer = QuestionsSerializer(recommendations[:5], many=True)
         else:
