@@ -390,10 +390,9 @@ def recommendation(request, mode):
         genre_options = {'1':["Action", "Adventure", "Crime", "Western"],'2':["Fantasy", "Science Fiction"],'3':["Romance", "Family", "Animation", "Drama", "Comedy", "Music"],'4':["Thriller", "Horror", "Mystery", "War"], '5':["History", "Documentary", "Foreign", "TV Movie"]}
         runtime_options = {'1':[0,100],'2':[101,130],'3':[131,160],'4':[160,1000]}
         release_date_options ={'1':['1000-01-01','1969-12-01'],'2':['1970-01-01','1999-12-31'],'3':['2000-01-01','2019-12-31'],'4':['2020-01-01','3000-01-01']}
-        
-        genres = genre_options[request.POST['genre']]
-        runtime = runtime_options[request.POST['runtime']] 
-        release_date = release_date_options[request.POST['release_date']]
+        genres = genre_options[request.data['genre']]
+        runtime = runtime_options[request.data['runtime']] 
+        release_date = release_date_options[request.data['release_date']]
 
         movies_runtime = Movie.objects.filter(runtime__range=(runtime[0],runtime[1])) & Movie.objects.filter(release_date__range=(release_date[0], release_date[1]))
         movies = Movie.objects.all()
