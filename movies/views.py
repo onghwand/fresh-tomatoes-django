@@ -59,7 +59,7 @@ def related_genre(request, movie_pk): # 해당 영화가 가진 장르들과 똑
     return Response(serializer.data)
 
 @api_view(['GET']) 
-def related_release_date(request, movie_pk): # 해당 영화 개봉일 앞뒤 14일 이내에 개봉한 영화들
+def related_release_date(request, movie_pk): # 해당 영화 개봉일 앞뒤 90일 이내에 개봉한 영화들
     movie = get_object_or_404(Movie, pk=movie_pk)
     start_date = movie.release_date - datetime.timedelta(days=90)
     end_date = movie.release_date + datetime.timedelta(days=90)
