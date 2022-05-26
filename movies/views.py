@@ -234,6 +234,9 @@ def get_movies(request, mode): # 시간이 너무 오래 걸림.. table을 따�
         path_keywords = f'/movie/{movie_id}/keywords'
         detail = requests.get(BASE_URL+path_detail, params=params).json()
         keywords = requests.get(BASE_URL+path_keywords, params=params_keywords).json()
+        
+        if detail['poster_path'] == "" or detail['poster_path'] == None :
+            return 
             
         movie = Movie.objects.create(m_id=detail['id'],
                                     title=detail['title'],
@@ -434,8 +437,8 @@ def search(request):
         detail = requests.get(BASE_URL+path_detail, params=params).json()
         keywords = requests.get(BASE_URL+path_keywords, params=params_keywords).json()
         
-        if detail['release_date'] == "":
-            detail['release_date'] = "1000-01-01"
+        if detail['poster_path'] == "" or detail['poster_path'] == None :
+            return 0
             
         movie = Movie.objects.create(m_id=detail['id'],
                                     title=detail['title'],
@@ -482,6 +485,8 @@ def search(request):
     for res in response:
         if not Movie.objects.filter(m_id=res['id']).exists():
             movie = create_movie(res)
+            if movie == 0:
+                continue
             movie_pks.append(movie.pk)
         else:
             movie = Movie.objects.get(m_id=res['id'])
@@ -566,3 +571,13 @@ def search(request):
 #     movies = Movie.objects.all()
 #     serializer = MovieListSerializer(movies, many=True)
 #     return Response(serializer.data)
+
+# @api_view(['GET'])
+# def null(request):
+#     movies =Movie.objects.all()
+#     cnt = 1
+#     for movie in movies:
+#         if movie.poster_path == None:
+#             movie.delete()
+#             print('1',cnt)
+#             cnt += 1

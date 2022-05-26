@@ -34513,22 +34513,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 4315,
-    "fields": {
-        "movie": 1461,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 4316,
-    "fields": {
-        "movie": 1461,
-        "genre": 5
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 4317,
     "fields": {
         "movie": 1462,
@@ -57393,22 +57377,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 7175,
-    "fields": {
-        "movie": 2581,
-        "genre": 17
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 7176,
-    "fields": {
-        "movie": 2581,
-        "genre": 18
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 7177,
     "fields": {
         "movie": 2582,
@@ -77873,22 +77841,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 9741,
-    "fields": {
-        "movie": 3649,
-        "genre": 11
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 9742,
-    "fields": {
-        "movie": 3649,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 9743,
     "fields": {
         "movie": 3650,
@@ -83073,22 +83025,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 10391,
-    "fields": {
-        "movie": 3939,
-        "genre": 11
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 10392,
-    "fields": {
-        "movie": 3939,
-        "genre": 9
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 10393,
     "fields": {
         "movie": 3940,
@@ -84869,22 +84805,6 @@
     "fields": {
         "movie": 4041,
         "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 10616,
-    "fields": {
-        "movie": 4042,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 10617,
-    "fields": {
-        "movie": 4042,
-        "genre": 5
     }
 },
 {
@@ -87793,30 +87713,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 10981,
-    "fields": {
-        "movie": 4207,
-        "genre": 7
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 10982,
-    "fields": {
-        "movie": 4207,
-        "genre": 1
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 10983,
-    "fields": {
-        "movie": 4207,
-        "genre": 13
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 10984,
     "fields": {
         "movie": 4208,
@@ -88989,22 +88885,6 @@
     "fields": {
         "movie": 4278,
         "genre": 11
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11131,
-    "fields": {
-        "movie": 4279,
-        "genre": 11
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11132,
-    "fields": {
-        "movie": 4279,
-        "genre": 17
     }
 },
 {
@@ -90777,14 +90657,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 11354,
-    "fields": {
-        "movie": 4385,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 11355,
     "fields": {
         "movie": 4386,
@@ -91129,14 +91001,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 11398,
-    "fields": {
-        "movie": 4409,
-        "genre": 13
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 11399,
     "fields": {
         "movie": 4410,
@@ -91261,14 +91125,6 @@
     "fields": {
         "movie": 4417,
         "genre": 12
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11415,
-    "fields": {
-        "movie": 4418,
-        "genre": 6
     }
 },
 {
@@ -91564,14 +91420,6 @@
     "pk": 11452,
     "fields": {
         "movie": 4435,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11453,
-    "fields": {
-        "movie": 4436,
         "genre": 6
     }
 },
@@ -92065,14 +91913,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 11515,
-    "fields": {
-        "movie": 4465,
-        "genre": 18
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 11516,
     "fields": {
         "movie": 4466,
@@ -92209,22 +92049,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 11533,
-    "fields": {
-        "movie": 4474,
-        "genre": 7
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11534,
-    "fields": {
-        "movie": 4474,
-        "genre": 14
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 11535,
     "fields": {
         "movie": 4475,
@@ -92301,14 +92125,6 @@
     "fields": {
         "movie": 4481,
         "genre": 17
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11545,
-    "fields": {
-        "movie": 4482,
-        "genre": 18
     }
 },
 {
@@ -93889,14 +93705,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 11743,
-    "fields": {
-        "movie": 4591,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 11744,
     "fields": {
         "movie": 4592,
@@ -94193,30 +94001,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 11781,
-    "fields": {
-        "movie": 4609,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11782,
-    "fields": {
-        "movie": 4609,
-        "genre": 11
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11783,
-    "fields": {
-        "movie": 4609,
-        "genre": 12
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 11784,
     "fields": {
         "movie": 4610,
@@ -94433,22 +94217,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 11811,
-    "fields": {
-        "movie": 4623,
-        "genre": 4
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11812,
-    "fields": {
-        "movie": 4623,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 11813,
     "fields": {
         "movie": 4624,
@@ -94541,14 +94309,6 @@
     "fields": {
         "movie": 4631,
         "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11825,
-    "fields": {
-        "movie": 4632,
-        "genre": 18
     }
 },
 {
@@ -94825,14 +94585,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 11860,
-    "fields": {
-        "movie": 4651,
-        "genre": 18
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 11861,
     "fields": {
         "movie": 4652,
@@ -95009,30 +94761,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 11883,
-    "fields": {
-        "movie": 4664,
-        "genre": 17
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11884,
-    "fields": {
-        "movie": 4664,
-        "genre": 11
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11885,
-    "fields": {
-        "movie": 4664,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 11886,
     "fields": {
         "movie": 4665,
@@ -95053,14 +94781,6 @@
     "fields": {
         "movie": 4665,
         "genre": 4
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11889,
-    "fields": {
-        "movie": 4666,
-        "genre": 6
     }
 },
 {
@@ -95429,14 +95149,6 @@
     "fields": {
         "movie": 4692,
         "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 11936,
-    "fields": {
-        "movie": 4693,
-        "genre": 11
     }
 },
 {
@@ -95969,30 +95681,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 12003,
-    "fields": {
-        "movie": 4726,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 12004,
-    "fields": {
-        "movie": 4726,
-        "genre": 11
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 12005,
-    "fields": {
-        "movie": 4726,
-        "genre": 9
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 12006,
     "fields": {
         "movie": 4727,
@@ -96021,14 +95709,6 @@
     "fields": {
         "movie": 4728,
         "genre": 3
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 12010,
-    "fields": {
-        "movie": 4729,
-        "genre": 18
     }
 },
 {
@@ -96097,30 +95777,6 @@
 },
 {
     "model": "movies.moviegenre",
-    "pk": 12019,
-    "fields": {
-        "movie": 4736,
-        "genre": 7
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 12020,
-    "fields": {
-        "movie": 4736,
-        "genre": 6
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 12021,
-    "fields": {
-        "movie": 4736,
-        "genre": 4
-    }
-},
-{
-    "model": "movies.moviegenre",
     "pk": 12022,
     "fields": {
         "movie": 4737,
@@ -96173,22 +95829,6 @@
     "fields": {
         "movie": 4740,
         "genre": 12
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 12029,
-    "fields": {
-        "movie": 4741,
-        "genre": 1
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 12030,
-    "fields": {
-        "movie": 4741,
-        "genre": 10
     }
 },
 {
@@ -96437,14 +96077,6 @@
     "fields": {
         "movie": 4756,
         "genre": 12
-    }
-},
-{
-    "model": "movies.moviegenre",
-    "pk": 12062,
-    "fields": {
-        "movie": 4757,
-        "genre": 6
     }
 },
 {
