@@ -50,7 +50,7 @@ def related_genre(request, movie_pk): # 해당 영화가 가진 장르들과 똑
     moviegenres = MovieGenre.objects.filter(movie=movie)
     movie_ids = []
     for moviegenre in moviegenres:
-        similar_genres = MovieGenre.objects.filter(genre=moviegenre.genre)[:5]
+        similar_genres = MovieGenre.objects.filter(genre=moviegenre.genre)[:15]
         for similar in similar_genres:
             movie_ids.append(similar.movie.id)
             
@@ -61,8 +61,8 @@ def related_genre(request, movie_pk): # 해당 영화가 가진 장르들과 똑
 @api_view(['GET']) 
 def related_release_date(request, movie_pk): # 해당 영화 개봉일 앞뒤 14일 이내에 개봉한 영화들
     movie = get_object_or_404(Movie, pk=movie_pk)
-    start_date = movie.release_date - datetime.timedelta(days=60)
-    end_date = movie.release_date + datetime.timedelta(days=60)
+    start_date = movie.release_date - datetime.timedelta(days=90)
+    end_date = movie.release_date + datetime.timedelta(days=90)
     
     movies = Movie.objects.filter(release_date__range=(start_date, end_date)).exclude(pk=movie_pk).order_by("-popularity")
     serializer = MovieReleaseSerializer(movies, many=True)
