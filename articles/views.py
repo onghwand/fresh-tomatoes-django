@@ -2,6 +2,7 @@
 
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
+from django.core.paginator import Paginator
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -20,7 +21,11 @@ def article_list_or_create(request):
             comment_count=Count('comments', distinct=True),
             like_count=Count('like_users', distinct=True)
         ).order_by('-pk')
-        serializer = ArticleListSerializer(articles, many=True)
+        paginator = Paginator(articles, 3)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        serializer = ArticleListSerializer(page_obj, many=True)
+        # serializer = ArticleListSerializer(articles, many=True)
         return Response(serializer.data)
     
     def create_article():
