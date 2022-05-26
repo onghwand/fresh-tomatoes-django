@@ -38,7 +38,7 @@ class MovieReleaseSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Movie
-        fields = ('pk', 'title', 'release_date', 'popularity', 'poster_path', 'like_users',)
+        fields = ('pk', 'title', 'release_date', 'popularity', 'poster_path', 'like_users', 'runtime',)
 
 class MovieGenreSerializer(serializers.ModelSerializer):
     
@@ -50,7 +50,7 @@ class MovieGenreSerializer(serializers.ModelSerializer):
        
     class Meta:
         model = Movie
-        fields = ('pk', 'title', 'genres', 'poster_path', 'like_users',)
+        fields = ('pk', 'title', 'genres', 'poster_path', 'like_users', 'runtime',)
         
 class QuestionsSerializer(serializers.ModelSerializer):
     
