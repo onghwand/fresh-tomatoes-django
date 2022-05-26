@@ -1,7 +1,7 @@
 import random
 import requests
 import datetime
-#import time
+import time
 #import json
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.contrib.auth import get_user_model
@@ -236,7 +236,7 @@ def get_movies(request, mode): # 시간이 너무 오래 걸림.. table을 따�
         detail = requests.get(BASE_URL+path_detail, params=params).json()
         keywords = requests.get(BASE_URL+path_keywords, params=params_keywords).json()
         
-        if detail['poster_path'] == "" or detail['poster_path'] == None :
+        if detail['poster_path'] == "" or detail['poster_path'] == None or detail['id']==414906:
             return 
             
         movie = Movie.objects.create(m_id=detail['id'],
@@ -291,9 +291,14 @@ def get_movies(request, mode): # 시간이 너무 오래 걸림.. table을 따�
             if not Movie.objects.filter(m_id=response['id']).exists():
                 create_movie(response)
             else:
-                movie = Movie.objects.get(m_id=response['id'])
-                movie.now_playing = True
-                movie.save()
+                movie = Movie.objects.filter(m_id=response['id'])
+                if len(movie) == 2:
+                    movie.delete()
+                else:
+                    movie = Movie.objects.get(m_id=response['id'])
+                    movie.now_playing = True
+                    movie.save()
+                      
 
         now_playings = Movie.objects.filter(now_playing=True)
         serializer = MovieListSerializer(now_playings, many=True)
@@ -305,13 +310,18 @@ def get_movies(request, mode): # 시간이 너무 오래 걸림.. table을 따�
         
         # 상영중인 영화를 받아옴  
         response_popular = requests.get(BASE_URL+path_popular, params=params).json()['results']
+        response_now_playing = requests.get(BASE_URL+path_now_playing, params=params).json()['results']
         for response in response_popular:
             if not Movie.objects.filter(m_id=response['id']).exists():
                 create_movie(response)
             else:
-                movie = Movie.objects.get(m_id=response['id'])
-                movie.popular = True
-                movie.save()
+                movie = Movie.objects.filter(m_id=response['id'])
+                if len(movie) == 2:
+                    movie.delete()
+                else:
+                    movie = Movie.objects.get(m_id=response['id'])
+                    movie.popular = True
+                    movie.save()
 
         populars = (Movie.objects.filter(popular=True) & Movie.objects.filter(now_playing=False))[:20]
         serializer = MovieListSerializer(populars, many=True)
@@ -407,7 +417,7 @@ def recommendation(request, mode):
         movies_genre = Movie.objects.filter(m_id__in = movies_genre)
 
         recommendations = (movies_genre & movies_runtime).order_by('-popularity')
-        print(recommendations)
+        #print(recommendations)
         if len(recommendations) > 5:
             serializer = QuestionsSerializer(recommendations[:5], many=True)
         else:
@@ -416,6 +426,7 @@ def recommendation(request, mode):
     
 @api_view(['POST'])
 def search(request):
+    point = time.time()
     path = "/search/movie"
     query = request.data['query']
     params = {
@@ -438,7 +449,7 @@ def search(request):
             return 0
         elif detail['release_date'] == "" or detail['release_date'] == None:
             return 0
-            
+        point1 = time.time()  
         movie = Movie.objects.create(m_id=detail['id'],
                                     title=detail['title'],
                                     overview=detail['overview'],
@@ -458,8 +469,8 @@ def search(request):
                                     homepage=detail['homepage'],
                                     now_playing=True,
                                     )
-            
-    
+        print('1',time.time() - point1)  
+        point2 = time.time()
         for res in detail['genres']:
             if not Genre.objects.filter(g_id=res['id']).exists():
                 genre = Genre.objects.create(g_id=res['id'],
@@ -477,10 +488,12 @@ def search(request):
                 keyword = Keyword.objects.get(k_id=res['id'])
                 MovieKeyword.objects.create(movie=movie,
                                             keyword=keyword)
+        print('2',time.time() - point2)
         return movie       
     response = requests.get(BASE_URL+path, params=params).json()
-    response = response['results']
-    movie_pks = []            
+    response = response['results'][:8]
+    movie_pks = []
+    point3 = time.time()            
     for res in response:
         if not Movie.objects.filter(m_id=res['id']).exists():
             movie = create_movie(res)
@@ -490,9 +503,10 @@ def search(request):
         else:
             movie = Movie.objects.get(m_id=res['id'])
             movie_pks.append(movie.pk)
-            
+    print(time.time() - point3)        
     movies = Movie.objects.filter(pk__in=movie_pks)
     serializer = MovieListSerializer(movies, many=True)
+    print('total',time.time() - point)
     return Response(serializer.data)
 # def edit_data(request):
 #     params = {
@@ -580,3 +594,4 @@ def search(request):
 #             movie.delete()
 #             print('1',cnt)
 #             cnt += 1
+
