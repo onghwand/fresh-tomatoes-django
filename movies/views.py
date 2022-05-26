@@ -436,6 +436,8 @@ def search(request):
         
         if detail['poster_path'] == "" or detail['poster_path'] == None :
             return 0
+        elif detail['release_date'] == "" or detail['release_date'] == None:
+            return 0
             
         movie = Movie.objects.create(m_id=detail['id'],
                                     title=detail['title'],
