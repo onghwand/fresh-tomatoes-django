@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_extensions',
     'drf_yasg',
+    'bootstrap5',
     # DRF auth
     'dj_rest_auth',
     'dj_rest_auth.registration',
