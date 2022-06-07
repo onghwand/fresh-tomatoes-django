@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'drf_yasg',
     'bootstrap5',
+    
     # DRF auth
     'dj_rest_auth',
     'dj_rest_auth.registration',
@@ -75,6 +76,7 @@ LOGIN_REDIRECT_URL = '/'
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -155,6 +157,8 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -177,3 +181,7 @@ REST_FRAMEWORK = {
       'rest_framework.permissions.AllowAny',  
     ],
 }
+
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
