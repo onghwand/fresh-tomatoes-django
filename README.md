@@ -1,4 +1,4 @@
-# SAFFY 1학기 최종 프로젝트 - EURACHACHA(2022-05-20~2022-05-26)
+# SSAFY 1학기 최종 프로젝트 - EURACHACHA(2022-05-20~2022-05-26)
 
 ## 1.:ledger: PJT summary
 
