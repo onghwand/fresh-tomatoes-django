@@ -1,5 +1,11 @@
 # SSAFY 1학기 최종 프로젝트 - EURACHACHA(2022-05-20~2022-05-26)
 
+## 0. :dagger: Deploy
+
+- [EURACHACHA](https://eurachacha.netlify.app/)
+
+- [API](https://dh96sss.herokuapp.com/)
+
 ## 1.:ledger: PJT summary
 
 - 팀명: DH96s - 둘 다 이름의 이니셜이 DH이고, 96년생이다
